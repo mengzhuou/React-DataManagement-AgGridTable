@@ -2,9 +2,10 @@ import './App.css';
 
 import {AgGridReact} from 'ag-grid-react';
 
+import {v4 as uuid} from 'uuid';
+
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-
 
 import {useState, useRef, useCallback} from 'react';
 
@@ -13,9 +14,9 @@ function App() {
   const gridRef = useRef();
 
   const [rowData] = useState([
-    {name: 'Nina', age: 22, degree: 'bachelor'},
-    {name: 'Jack', age: 28, degree: 'bachelor'},
-    {name: 'Jan', age: 42, degree: 'high school'}
+    {id: uuid(), name: 'Nina', age: 22, degree: 'bachelor'},
+    {id: uuid(), name: 'Jack', age: 28, degree: 'bachelor'},
+    {id: uuid(), name: 'Jan', age: 42, degree: 'high school'}
   ]);
 
   const [columnDefs] = useState([
@@ -33,16 +34,23 @@ function App() {
 
   const cellClickedListener = useCallback( event => {
     console.log('cellClicked', event);
+    console.log('cellClicked', 'Row ID:', event.data.id);
   }, []);
 
   const buttonListener = useCallback( e => {
     gridRef.current.api.deselectAll();
   }, []);
 
+  const getRowId = useCallback((params) => params.data.id, []);
+
+
   return (
     <div>
       <button onClick={buttonListener}>Push Me</button>
-      <div className="ag-theme-alpine" style={{width: 500, height: 500}}>
+      <div 
+        className="ag-theme-alpine" 
+        style={{width: 800, height: 500}}
+      >
         <AgGridReact 
           ref={gridRef}
           rowData={rowData} 
@@ -50,6 +58,7 @@ function App() {
           animateRows={true} rowSelection='multiple'
           onCellClicked={cellClickedListener}
           defaultColDef={defaultColDef}
+          grtRowId={getRowId}
         />
       </div>
     </div>
