@@ -6,7 +6,7 @@ import {v4 as uuid} from 'uuid';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-
+import PopupModal from './PopupModal.js'
 import {useState, useRef, useCallback} from 'react';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
   const defaultColDef = ()=> (
     {
       sortable: true, 
-      filter: true
+      filter: true,
     }
   );
 
@@ -46,6 +46,37 @@ function App() {
 
   const getRowId = useCallback((params) => params.data.id, []);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [selectedCell, setSelectedCell] = useState(null);
+
+  const openPopupModal = (event) => {
+    setSelectedCell(event);
+    setIsModalOpen(true);
+  };
+
+  const closePopupModal = () => {
+    setIsModalOpen(false);
+    setSelectedCell(null);
+    setInputValue('');
+  };
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSave = () => {
+    if (selectedCell) {
+      const updatedData = rowData.map(row => {
+        if (row.id === selectedCell.data.id) {
+          return { ...row, [selectedCell.colDef.field]: inputValue };
+        }
+        return row;
+      });
+      // setRowData(updatedData);
+      closePopupModal();
+    }
+  };
   return (
     <div>
       <button onClick={buttonListener}>Push Me</button>
@@ -61,8 +92,17 @@ function App() {
           onCellClicked={cellClickedListener}
           defaultColDef={defaultColDef}
           getRowId={getRowId}
+          onCellDoubleClicked={openPopupModal}
         />
       </div>
+      {isModalOpen && (
+        <PopupModal
+          onClose={closePopupModal}
+          inputValue={inputValue}
+          handleInputChange={handleInputChange}
+          handleSave={handleSave}
+        />
+      )}
     </div>
   );
 }
