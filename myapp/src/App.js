@@ -67,14 +67,18 @@ function App() {
 
   const handleSave = () => {
     if (selectedCell) {
-      const updatedData = rowData.map(row => {
+      rowData.map(row => {
         const colName =  selectedCell.colDef.field;
         const rowId = selectedCell.data.id;
         if (row.id === rowId) {
           const currentVal = selectedCell.value;
           const rowNode = gridRef.current.api.getRowNode(rowId);
           rowNode.setDataValue(colName, inputValue);
-          // gridRef.current.api.setRowData(updatedData);
+          rowNode.setRowHeight(80);
+          rowNode.setRowHeight(80);
+          gridRef.current.api.onRowHeightChanged();
+
+
           console.log("hi", {
             rowNode,
             colName,
@@ -107,6 +111,7 @@ function App() {
           defaultColDef={defaultColDef}
           getRowId={getRowId}
           onCellDoubleClicked={openPopupModal}
+          rowHeight={40}
         />
       </div>
       {isModalOpen && (
