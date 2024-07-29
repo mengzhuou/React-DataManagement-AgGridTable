@@ -33,10 +33,10 @@ function App() {
   );
 
   const cellClickedListener = useCallback( event => {
-    console.log('cellClicked', event);
-    console.log('cellClicked', 'Row ID:', event.data.id);
+    // console.log('cellClicked', event);
+    // console.log('cellClicked', 'Row ID:', event.data.id);
     const rowNode = gridRef.current.api.getRowNode(event.data.id);
-    console.log('Row Node:', rowNode);
+    // console.log('Row Node:', rowNode);
 
   }, []);
 
@@ -68,12 +68,26 @@ function App() {
   const handleSave = () => {
     if (selectedCell) {
       const updatedData = rowData.map(row => {
-        if (row.id === selectedCell.data.id) {
+        const colName =  selectedCell.colDef.field;
+        const rowId = selectedCell.data.id;
+        if (row.id === rowId) {
+          const currentVal = selectedCell.value;
+          const rowNode = gridRef.current.api.getRowNode(rowId);
+          rowNode.setDataValue(colName, inputValue);
+          // gridRef.current.api.setRowData(updatedData);
+          console.log("hi", {
+            rowNode,
+            colName,
+            gridRef,
+            selectedCell,
+            currentVal,
+            inputValue,
+          })
+
           return { ...row, [selectedCell.colDef.field]: inputValue };
         }
         return row;
       });
-      // setRowData(updatedData);
       closePopupModal();
     }
   };
