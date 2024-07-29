@@ -35,6 +35,9 @@ function App() {
   const cellClickedListener = useCallback( event => {
     console.log('cellClicked', event);
     console.log('cellClicked', 'Row ID:', event.data.id);
+    const rowNode = gridRef.current.api.getRowNode(event.data.id);
+    console.log('Row Node:', rowNode);
+
   }, []);
 
   const buttonListener = useCallback( e => {
@@ -42,7 +45,6 @@ function App() {
   }, []);
 
   const getRowId = useCallback((params) => params.data.id, []);
-
 
   return (
     <div>
@@ -58,7 +60,7 @@ function App() {
           animateRows={true} rowSelection='multiple'
           onCellClicked={cellClickedListener}
           defaultColDef={defaultColDef}
-          grtRowId={getRowId}
+          getRowId={getRowId}
         />
       </div>
     </div>
